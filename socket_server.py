@@ -16,13 +16,19 @@ def Main():
     req, addr = s.recvfrom(1024)
     req = req.decode('utf-8')
     
-    while req != 'q':
-        data = ser.readline()
-        time.sleep(0.5)
-        print("Sending: " + data.decode('utf-8'))
-        s.sendto(data, addr)
-        # req, addr = s.recvfrom(1024)
-        # req = data.decode('utf-8')
+    while req != 'disconnect':
+        if req == 'connect':
+            print("Connected...")
+            s.sendto('success'.decode('utf-8'), addr)
+            
+        if req == 'gps':
+            data = ser.readline()
+            # time.sleep(0.5)
+            print("Sending: " + data.decode('utf-8'))
+            s.sendto(data, addr)
+
+        req, addr = s.recvfrom(1024)
+        req = req.decode('utf-8')
         
     s.close()
 

@@ -4,7 +4,7 @@ import time
 
 def Main():
    
-    host = '192.168.2.110' #Server ip
+    host = '192.168.2.115' #Server ip
     port = 7564
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -17,9 +17,9 @@ def Main():
     req = req.decode('utf-8')
     
     while req != 'disconnect':
-        if req == 'connect':
+        if req == 'server_connect':
             print("Connected...")
-            s.sendto('success'.decode('utf-8'), addr)
+            s.sendto('Connected'.decode('utf-8'), addr)
             
         if req == 'gps':
             data = ser.readline()

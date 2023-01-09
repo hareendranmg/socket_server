@@ -8,13 +8,27 @@ import os
 from pypylon import genicam
 from pypylon import pylon
 import sys
-from io import StringIO
+from io import StringIO, BytesIO
+import socket
+import base64
+# import cv2
+import numpy as np
+import pickle
+from PIL import Image
 
 
-config_ser = serial.Serial('/dev/ttyUSB0', 115200)
+
+# config_ser = serial.Serial('/dev/ttyUSB0', 115200)
 # awr_data_ser = serial.Serial('/dev/ttyUSB1', 921600)
 # gps_ser = serial.Serial('/dev/ttyUSB2', 9600, timeout=0.5)
 
+def get_host_ip():
+    try:
+        host_name = socket.gethostname()
+        host_ip = socket.gethostbyname(host_name)
+        return host_ip
+    except:
+        return None
 
 
 async def handler(websocket, path):
@@ -61,6 +75,7 @@ async def handler(websocket, path):
             await websocket.send("Disconnected") 
         if req == 'camera_on':
             try:
+                buff = BytesIO()
                 countOfImagesToGrab = 10
                 maxCamerasToUse = 1
                 exitCode = 0
@@ -81,7 +96,8 @@ async def handler(websocket, path):
                     cam.Open()
                     cam.Width=2448
                     cam.Height=2048
-                    cam.ExposureTime.SetValue(20000)
+                    cam.ExposureTime.SetValue(100000)
+                    # cam.ExposureTime.SetValue(20000)
                     print("Using device ", cam.GetDeviceInfo().GetModelName())
 
                 cameras.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
@@ -100,6 +116,7 @@ async def handler(websocket, path):
 
                     if grabResult.GrabSucceeded():
                         image = converter.Convert(grabResult) # Access the openCV image data
+                        # print(image)
                         if cameraContextValue == 0: #If camera 0, save array into img0[]
                             img0 = image.GetArray()
                         else: #if camera 1, save array into img1[]
@@ -107,7 +124,7 @@ async def handler(websocket, path):
 
                         if len(img1) == 0:
                             img1 = img0
-                        print(img0)
+                        # print(img0)
 
                     else:
                         print("Error: ", grabResult.ErrorCode)
@@ -116,17 +133,38 @@ async def handler(websocket, path):
                     # np.savez_compressed(f,frame=img0)
                     # f.seek(0)
                     # out = f.read()
-                    await websocket.send(str(img0))
+                    # image_b64 = base64.b64encode(img0).decode("utf-8")
+                    # print(image_b64)
+                    # print(image_b64)
+                    # await websocket.send(str(image_b64))
+                    # await websocket.send(img0)
+                    # print(img0.shape)
+                    # data = pickle.dumps(img0)
+
+                    pil_img = Image.fromarray(img0)
+                    pil_img.save(buff, format="JPEG")
+                    new_image_string = base64.b64encode(buff.getvalue()).decode("utf-8")
+                    # print("-------------------------------------------------------------")
+                    # print(new_image_string)
+                    # print("-------------------------------------------------------------")
+                    # await websocket.send(image_b64)
+                    await websocket.send(new_image_string)
+                    # pil_img.
+                    # await websocket.send(str(img0))
                     time.sleep(0.1)
+
 
             except genicam.GenericException as e:
                 print("An exception occurred.", e.GetDescription())
                 exitCode = 1
 
-                           
+        print("############################################")
+        print("############ CAMERA OFF ###################")
+        print("############################################")
+                
 
 
-start_server = websockets.serve(handler, "192.168.2.115", 8765)
+start_server = websockets.serve(handler, get_host_ip(), 8765)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

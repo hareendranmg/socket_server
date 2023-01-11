@@ -80,7 +80,7 @@ async def handler(websocket, path):
             if req == 'camera_on':
                 try:
                     countOfImagesToGrab = 10
-                    maxCamerasToUse = 1
+                    maxCamerasToUse = 2
                     exitCode = 0
                     img0 = []
                     img1 = []
@@ -91,16 +91,15 @@ async def handler(websocket, path):
                     if len(devices) == 0:
                         raise pylon.RUNTIME_EXCEPTION("No camera present.")
 
-                    cameras = pylon.InstantCameraArray(min(len(devices), maxCamerasToUse))    
-                    # l = cameras.GetSize()
+                    cameras = pylon.InstantCameraArray(2)    
 
+                    # l = cameras.GetSize()
                     for i, cam in enumerate(cameras):
                         cam.Attach(tlFactory.CreateDevice(devices[i]))
                         cam.Open()
                         cam.Width=2448
                         cam.Height=2048
                         cam.ExposureTime.SetValue(100000)
-                        # cam.ExposureTime.SetValue(20000)
                         print("Using device ", cam.GetDeviceInfo().GetModelName())
 
                     cameras.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
@@ -137,20 +136,26 @@ async def handler(websocket, path):
                         grabResult.Release()
                         
                                         
-                        pil_img = Image.fromarray(img0)
-                        resized_image = pil_img.resize((400, 400))
+                        pil_img0 = Image.fromarray(img0)
+                        resized_image0 = pil_img0.resize((300, 300))
+                        pil_img1 = Image.fromarray(img1)
+                        resized_image1 = pil_img1.resize((300, 300))
                         with BytesIO() as buff:
-                            # buff = BytesIO()
-                            resized_image.save(buff, format="JPEG")
-                            new_image_string = base64.b64encode(buff.getvalue()).decode("utf-8")
-                            await websocket.send(new_image_string)
+                            resized_image1.save(buff, format="JPEG")
+                            new_image_string1 = base64.b64encode(buff.getvalue()).decode("utf-8")
+                            buff.seek(0)
+                            buff.truncate(0)
+                            resized_image0.save(buff, format="JPEG")
+                            new_image_string0 = base64.b64encode(buff.getvalue()).decode("utf-8")
+                            final_string = new_image_string0+"::"+new_image_string1
+                            await websocket.send(final_string)
                             buff.close()
 
 
                     print("outside")
                 except Exception as e:
                     # cameras.
-                    grabResult.Release()
+                    # grabResult.Release()
                     print("An exception occurred.", e)
                     # buff.close()
                     # buff.seek(0)

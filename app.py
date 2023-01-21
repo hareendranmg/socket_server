@@ -1,4 +1,3 @@
-import serial
 import asyncio
 import websockets
 import time
@@ -15,18 +14,12 @@ import pickle
 from PIL import Image
 
 import utils
-from gps import GPS
+
 from adis16470 import ADIS16470
-
-
-
-# config_ser = serial.Serial('/dev/ttyUSB0', 115200)
-# awr_data_ser = serial.Serial('/dev/ttyUSB1', 921600)
+from gps import GPS
+from awr6843aopevm import AWR6843AOPEVM
 
 global previous_command
-
-
-
 
 async def handler(websocket, path):
     try:
@@ -48,24 +41,11 @@ async def handler(websocket, path):
    
 
             if req == 'radar_on':
-                with open('config.txt', 'r') as file:
-                    index = 0
-                    for line in file:
-                        index = index + 1 
-                        data_bytes = line.encode('utf-8')
-                        config_ser.write(data_bytes)
-                        time.sleep(0.05)
-                        data  = config_ser.read_until("\r".encode('utf-8'))
-                        data = data.strip(b'\n\r').decode()
+                radar = AWR6843AOPEVM()
 
-
-                    data_bytes = 'configDataPort 921600 1'.encode('utf-8')
-                    config_ser.write(data_bytes)
-                while req != 'radar_off':
-                    bytecount = awr_data_ser.inWaiting()
-                    data = awr_data_ser.read(bytecount);
-                    await websocket.send(data)   
-                    time.sleep(0.5)        
+                while True:
+                    await websocket.send(radar.read_data())            
+                    time.sleep(0.5)
 
             if req == 'camera_on':
                 try:

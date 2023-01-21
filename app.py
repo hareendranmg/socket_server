@@ -11,16 +11,16 @@ import sys
 from io import StringIO, BytesIO
 import socket
 import base64
-# import cv2
 import numpy as np
 import pickle
 from PIL import Image
+# from 
 
 
 
 # config_ser = serial.Serial('/dev/ttyUSB0', 115200)
 # awr_data_ser = serial.Serial('/dev/ttyUSB1', 921600)
-# gps_ser = serial.Serial('/dev/ttyUSB2', 9600, timeout=0.5)
+gps_ser = serial.Serial('/dev/ttyS4', 9600, timeout=0.5)
 
 global previous_command
 
@@ -36,22 +36,18 @@ def get_host_ip():
 async def handler(websocket, path):
     try:
         async for req in websocket:      
-            previous_command = req             
+            previous_command = req 
+
+            if req == 'imu_on':
+                imu = A            
+
             if req == 'gps_on':
-                while req != 'gps_off':
+                while True:
                     data = gps_ser.readline()
-                    # time.sleep(0.5)
-                    print("Sending: " + data.decode('utf-8'))
                     await websocket.send(data)   
-                    # req = await websocket.recv()
-            if req == 'gps_off':
-                gps_ser.close()
-                print('Disconnected...')
-                await websocket.send("Disconnected") 
+
             if req == 'radar_on':
-                print('firat')
                 with open('config.txt', 'r') as file:
-                    print('second')
                     index = 0
                     for line in file:
                         index = index + 1 
@@ -60,23 +56,16 @@ async def handler(websocket, path):
                         time.sleep(0.05)
                         data  = config_ser.read_until("\r".encode('utf-8'))
                         data = data.strip(b'\n\r').decode()
-                        print('third in loop '+str(index))
 
 
                     data_bytes = 'configDataPort 921600 1'.encode('utf-8')
                     config_ser.write(data_bytes)
-                    print('fourth')
                 while req != 'radar_off':
                     bytecount = awr_data_ser.inWaiting()
                     data = awr_data_ser.read(bytecount);
-                    print(data);
                     await websocket.send(data)   
                     time.sleep(0.5)        
-            if req == 'radar_off':
-                awr_data_ser.close()
-                config_ser.close()
-                print('Disconnected...')
-                await websocket.send("Disconnected") 
+
             if req == 'camera_on':
                 try:
                     countOfImagesToGrab = 10
@@ -100,7 +89,6 @@ async def handler(websocket, path):
                         cam.Width=2448
                         cam.Height=2048
                         cam.ExposureTime.SetValue(100000)
-                        print("Using device ", cam.GetDeviceInfo().GetModelName())
 
                     cameras.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
 
@@ -152,7 +140,6 @@ async def handler(websocket, path):
                             buff.close()
 
 
-                    print("outside")
                 except Exception as e:
                     # cameras.
                     # grabResult.Release()

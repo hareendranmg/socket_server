@@ -9,28 +9,23 @@ from pypylon import genicam
 from pypylon import pylon
 import sys
 from io import StringIO, BytesIO
-import socket
 import base64
 import numpy as np
 import pickle
 from PIL import Image
-# from 
+
+import utils
+from gps import GPS
+from adis16470 import ADIS16470
 
 
 
 # config_ser = serial.Serial('/dev/ttyUSB0', 115200)
 # awr_data_ser = serial.Serial('/dev/ttyUSB1', 921600)
-gps_ser = serial.Serial('/dev/ttyS4', 9600, timeout=0.5)
 
 global previous_command
 
-def get_host_ip():
-    try:
-        host_name = socket.gethostname()
-        host_ip = socket.gethostbyname(host_name)
-        return host_ip
-    except:
-        return None
+
 
 
 async def handler(websocket, path):
@@ -39,12 +34,18 @@ async def handler(websocket, path):
             previous_command = req 
 
             if req == 'imu_on':
-                imu = A            
+                imu = ADIS16470()
+
+                while True:
+                    await websocket.send(imu.read_data())            
+                    time.sleep(0.5)
 
             if req == 'gps_on':
+                gps = GPS()
+
                 while True:
-                    data = gps_ser.readline()
-                    await websocket.send(data)   
+                    await websocket.send(gps.read_data())
+   
 
             if req == 'radar_on':
                 with open('config.txt', 'r') as file:
@@ -160,7 +161,7 @@ async def handler(websocket, path):
         print('The client disconnected')
 
 
-start_server = websockets.serve(handler, get_host_ip(), 8765)
+start_server = websockets.serve(handler, utils.get_host_ip(), 8765)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

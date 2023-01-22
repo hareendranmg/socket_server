@@ -4,11 +4,14 @@ import time
 class ADIS16470:
     def __init__(self):
         self.spi = spidev.SpiDev()
-        self.spi.close()
         self.spi.open(8, 0)
         self.spi.max_speed_hz = 1000000
         self.spi.mode = 0b11
         self.spi.lsbfirst = False
+
+
+    def __del__(self):
+        self.spi.close()
 
 
     def convert_deci_to_deg_per_sec(self, deci):

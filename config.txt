@@ -1,3 +1,25 @@
+% ***************************************************************
+% Created for SDK ver:03.05
+% Created using Visualizer ver:3.6.0.0
+% Frequency:60
+% Platform:xWR68xx_AOP
+% Scene Classifier:best_range_res
+% Azimuth Resolution(deg):30 + 30
+% Range Resolution(m):0.044
+% Maximum unambiguous Range(m):9.02
+% Maximum Radial Velocity(m/s):1
+% Radial velocity resolution(m/s):0.13
+% Frame Duration(msec):100
+% RF calibration data:None
+% Range Detection Threshold (dB):15
+% Doppler Detection Threshold (dB):15
+% Range Peak Grouping:enabled
+% Doppler Peak Grouping:enabled
+% Static clutter removal:disabled
+% Angle of Arrival FoV: Full FoV
+% Range FoV: Full FoV
+% Doppler FoV: Full FoV
+% ***************************************************************
 sensorStop
 flushCfg
 dfeDataOutputMode 1

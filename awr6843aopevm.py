@@ -22,6 +22,4 @@ class AWR6843AOPEVM:
         self.data_ser.close()
 
     def read_data(self):        
-        bytecount = self.data_ser.inWaiting()
-
-        return self.data_ser.read(bytecount);
+        return self.data_ser.read(self.data_ser.inWaiting());

@@ -7,7 +7,7 @@ class AWR6843AOPEVM:
         config_ser = serial.Serial('/dev/ttyUSB0', 115200)
         self.data_ser = serial.Serial('/dev/ttyUSB1', 921600)
 
-        with open('config.txt', 'r') as file:
+        with open('utils/config.txt', 'r') as file:
             for line in file:
                 data_bytes = line.encode('utf-8')
                 config_ser.write(data_bytes)

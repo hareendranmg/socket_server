@@ -2,10 +2,10 @@ import asyncio
 import websockets
 import time
 
-from adis16470 import ADIS16470
-from gps import GPS
-from awr6843aopevm import AWR6843AOPEVM
-from basler_camera import BaslerCamera
+from drivers.adis16470 import ADIS16470
+from drivers.gps import GPS
+from drivers.awr6843aopevm import AWR6843AOPEVM
+from drivers.basler_camera import BaslerCamera
 
 
 class WebSocketServer:

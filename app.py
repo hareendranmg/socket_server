@@ -1,9 +1,9 @@
 from web_socket_server import WebSocketServer
-import utils
+from utils import helpers
 
 def main():
     try:
-        ws = WebSocketServer(utils.get_host_ip(), 8765)
+        ws = WebSocketServer(helpers.get_host_ip(), 8765)
         ws.start()
     except KeyboardInterrupt:
         print('\nClosing Server...')

@@ -1,6 +1,7 @@
 import serial
 import time
 
+
 class AWR6843AOPEVM:
     def __init__(self):
         config_ser = serial.Serial('/dev/ttyUSB0', 115200)

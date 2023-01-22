@@ -4,8 +4,6 @@ from io import BytesIO
 import base64
 
 
-
-
 class BaslerCamera:
     def __init__(self):
         try:
@@ -36,8 +34,6 @@ class BaslerCamera:
         except Exception as e:
             print("Exception occurred in setting up cameras.", e)
 
-        
-
     def grab_images(self):
         try:
             if not self.cameras.IsGrabbing():
@@ -58,9 +54,8 @@ class BaslerCamera:
 
             else:
                 print("Error: ", grabResult.ErrorCode)
-            grabResult.Release()
-            
-                            
+
+            grabResult.Release()            
             pil_img0 = Image.fromarray(self.img0)
             resized_image0 = pil_img0.resize((300, 300))
             pil_img1 = Image.fromarray(self.img1)

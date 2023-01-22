@@ -1,6 +1,7 @@
 import spidev
 import time
 
+
 class ADIS16470:
     def __init__(self):
         self.spi = spidev.SpiDev()
@@ -9,37 +10,31 @@ class ADIS16470:
         self.spi.mode = 0b11
         self.spi.lsbfirst = False
 
-
     def __del__(self):
         self.spi.close()
-
 
     def convert_deci_to_deg_per_sec(self, deci):
         return str((deci / 10)) + ' deg/sec' 
 
-
     def convert_deci_to_milli_g_force(self, deci):
         milli_g_force = deci * 1.25
         g_force = milli_g_force / 1000
-
         meter_per_square_second = g_force * 9.80665
 
         return str(round(meter_per_square_second, 2)) + ' m/s²'
 
-
     def convert_deci_to_degree(self, deci):
         degree = deci * 0.065917969
-        return str(round(degree, 4)) + 'ᵒ'
 
+        return str(round(degree, 4)) + 'ᵒ'
 
     def convert_deci_to_velocity(self, deci):
         velocity = deci * 0.012207031
-        return str(round(velocity, 4)) + ' m/sec'
 
+        return str(round(velocity, 4)) + ' m/sec'
 
     def read_signed_decimal(self, address):
         decimal_list = self.spi.xfer([address, 0x00])
-        # print(decimal_list)
         if decimal_list is None or len(decimal_list) != 2:
             raise RuntimeError('Did not read expected number of bytes from device!')
 
@@ -63,55 +58,41 @@ class ADIS16470:
         else:
             return int(binary_string, 2)
 
-
-
     def read_x_gyro_out(self):
         return self.convert_deci_to_deg_per_sec(self.read_signed_decimal(0x07))    
-
 
     def read_y_gyro_out(self):
         return self.convert_deci_to_deg_per_sec(self.read_signed_decimal(0x0B))    
 
-
     def read_z_gyro_out(self):
         return self.convert_deci_to_deg_per_sec(self.read_signed_decimal(0x0F))    
-
 
     def read_x_accl_out(self):
         return self.convert_deci_to_milli_g_force(self.read_signed_decimal(0x13))    
 
-
     def read_y_accl_out(self):
         return self.convert_deci_to_milli_g_force(self.read_signed_decimal(0x17))    
-
 
     def read_z_accl_out(self):
         return self.convert_deci_to_milli_g_force(self.read_signed_decimal(0x1B))    
 
-
     def read_x_deltang_out(self):
         return self.convert_deci_to_degree(self.read_signed_decimal(0x27))    
-
 
     def read_y_deltang_out(self):
         return self.convert_deci_to_degree(self.read_signed_decimal(0x2B))    
 
-
     def read_z_deltang_out(self):
         return self.convert_deci_to_degree(self.read_signed_decimal(0x2F))    
-
 
     def read_x_deltvel_out(self):
         return self.convert_deci_to_velocity(self.read_signed_decimal(0x33))    
 
-
     def read_y_deltvel_out(self):
         return self.convert_deci_to_velocity(self.read_signed_decimal(0x37))    
 
-
     def read_z_deltvel_out(self):
         return self.convert_deci_to_velocity(self.read_signed_decimal(0x3B))    
-
 
     def read_data(self):
         gyro_data = self.read_x_gyro_out()+':'+self.read_y_gyro_out()+':'+self.read_z_gyro_out()

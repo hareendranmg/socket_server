@@ -38,8 +38,8 @@ class WebSocketServer:
                     radar = AWR6843AOPEVM()
                     print('Sending Radar data...')
                     while True:
-                        await websocket.send(radar.read_data())            
-                        time.sleep(0.5)
+                        await websocket.send(str(radar.read_data()))            
+                        time.sleep(1)
 
                 if req == 'camera_on':
                     camera = BaslerCamera()

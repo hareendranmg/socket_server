@@ -39,6 +39,7 @@ class WebSocketServer:
                     print('Sending Radar data...')
                     while True:
                         await websocket.send(radar.read_data())            
+                        time.sleep(0.1)
 
                 if req == 'camera_on':
                     camera = BaslerCamera()

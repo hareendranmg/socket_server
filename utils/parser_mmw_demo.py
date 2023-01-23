@@ -184,22 +184,22 @@ def parser_one_mmw_demo_output_packet(data, readNumBytes,debug=False):
                          
     if headerStartIndex == -1:
         result = TC_FAIL
-        print("************ Frame Fail, cannot find the magic words *****************")
+        # print("************ Frame Fail, cannot find the magic words *****************")
     else:
         nextHeaderStartIndex = headerStartIndex + totalPacketNumBytes 
 
         if headerStartIndex + totalPacketNumBytes > readNumBytes:
             result = TC_FAIL
-            print("********** Frame Fail, readNumBytes may not long enough ***********")
+            # print("********** Frame Fail, readNumBytes may not long enough ***********")
         elif nextHeaderStartIndex + 8 < readNumBytes and checkMagicPattern(data[nextHeaderStartIndex:nextHeaderStartIndex+8:1]) == 0:
             result = TC_FAIL
-            print("********** Frame Fail, incomplete packet **********") 
+            # print("********** Frame Fail, incomplete packet **********") 
         elif numDetObj <= 0:
             result = TC_FAIL
-            print("************ Frame Fail, numDetObj = %d *****************" % (numDetObj))
+            # print("************ Frame Fail, numDetObj = %d *****************" % (numDetObj))
         elif subFrameNumber > 3:
             result = TC_FAIL
-            print("************ Frame Fail, subFrameNumber = %d *****************" % (subFrameNumber))
+            # print("************ Frame Fail, subFrameNumber = %d *****************" % (subFrameNumber))
         else: 
             # process the 1st TLV
             tlvStart = headerStartIndex + headerNumBytes

@@ -1,3 +1,4 @@
+import json
 import serial
 import time
 import numpy as np
@@ -16,7 +17,7 @@ byteBuffer = np.zeros(2**15,dtype = 'uint8')
 byteBufferLength = 0;
 maxBufferSize = 2**15;
 magicWord = [2, 1, 4, 3, 6, 5, 8, 7]
-detObj = {}  
+detObj = {"numObj": 0}  
 frameData = {}    
 currentIndex = 0
 word = [1, 2**8, 2**16, 2**24]
@@ -41,7 +42,7 @@ class AWR6843AOPEVM:
         magicOK = 0 # Checks if magic number has been read
         dataOK = 0 # Checks if the data has been read correctly
         frameNumber = 0
-        detObj = {}
+        detObj = {"numObj": 0}
 
         readBuffer = Dataport.read(Dataport.in_waiting)
         byteVec = np.frombuffer(readBuffer, dtype = 'uint8')
@@ -157,7 +158,8 @@ class AWR6843AOPEVM:
                 dataOK = 1 
             else: 
                 # error in parsing; exit the loop
-                print("error in parsing this frame; continue")
+                if(DEBUG):
+                    print("error in parsing this frame; continue")
 
             
             shiftSize = totalPacketNumBytes            
@@ -172,7 +174,9 @@ class AWR6843AOPEVM:
             if(DEBUG):
                 print("numFramesParsed: ", numFramesParsed)
 
-        return dataOK, frameNumber, detObj
+        return str(detObj)
+
+        # return dataOK, frameNumber, detObj
 
 
 

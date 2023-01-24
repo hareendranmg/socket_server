@@ -62,7 +62,7 @@ class WebSocketServer:
     def start(self):
         self.server = websockets.serve(self.handler, self.host, self.port)
         asyncio.get_event_loop().run_until_complete(self.server)
-        print('Websocket server started...')
+        print(f'Websocket server started at {self.host}:{self.port} address...')
         asyncio.get_event_loop().run_forever()
 
     def stop(self):

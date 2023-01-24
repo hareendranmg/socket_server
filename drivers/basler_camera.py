@@ -57,9 +57,9 @@ class BaslerCamera:
 
             grabResult.Release()            
             pil_img0 = Image.fromarray(self.img0)
-            resized_image0 = pil_img0.resize((300, 300))
+            resized_image0 = pil_img0.resize((400, 400))
             pil_img1 = Image.fromarray(self.img1)
-            resized_image1 = pil_img1.resize((300, 300))
+            resized_image1 = pil_img1.resize((400, 400))
 
             with BytesIO() as buff:
                 resized_image1.save(buff, format="JPEG")

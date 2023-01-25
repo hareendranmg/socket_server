@@ -1,5 +1,6 @@
 import spidev
 import time
+from datetime import datetime
 
 
 class ADIS16470:
@@ -62,7 +63,7 @@ class ADIS16470:
             else:
                 return int(binary_string, 2)
         except Exception as e:
-            print(e)
+            print(f'{datetime.now()}: {e}')
             return 0
 
     def read_x_gyro_out(self):

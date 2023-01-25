@@ -2,6 +2,7 @@ from pypylon import pylon
 from PIL import Image
 from io import BytesIO
 import base64
+from datetime import datetime
 
 
 class BaslerCamera:
@@ -32,7 +33,7 @@ class BaslerCamera:
             self.converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
 
         except Exception as e:
-            print("Exception occurred in setting up cameras.", e)
+            print(f"{datetime.now()}: Exception occurred in setting up cameras. {e}")
 
     def grab_images(self):
         try:
@@ -53,7 +54,7 @@ class BaslerCamera:
                     self.img1 = self.img0
 
             else:
-                print("Error: ", grabResult.ErrorCode)
+                print(f"{datetime.now()}: Error: {grabResult.ErrorCode}")
 
             grabResult.Release()            
             pil_img0 = Image.fromarray(self.img0)
@@ -73,4 +74,4 @@ class BaslerCamera:
                 return new_image_string0 + "::" + new_image_string1
 
         except Exception as e:
-            print("Exception occurred in grabing images.", e)
+            print(f"{datetime.now()}: Exception occurred in grabing images. {e}")

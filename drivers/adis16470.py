@@ -90,6 +90,8 @@ class ADIS16470:
     def read_timestamp_out(self):
         pass    
 
+    # TODO: Fix delta angle for y and z axis
+
     def read_x_deltang_out(self):
         return self.convert_deci_to_degree(self.read_signed_decimal(0x27))    
 
@@ -109,9 +111,10 @@ class ADIS16470:
         return self.convert_deci_to_velocity(self.read_signed_decimal(0x3A))    
 
     def read_data(self):
-        gyro_data = self.read_x_gyro_out()+':'+self.read_y_gyro_out()+':'+self.read_z_gyro_out()
         accl_data = self.read_x_accl_out()+':'+self.read_y_accl_out()+':'+self.read_z_accl_out()
         delta_ang_data = self.read_x_deltang_out()+':'+self.read_y_deltang_out()+':'+self.read_z_deltang_out()
         delta_vel_data = self.read_x_deltvel_out()+':'+self.read_y_deltvel_out()+':'+self.read_z_deltvel_out()
+        gyro_data = self.read_x_gyro_out()+':'+self.read_y_gyro_out()+':'+self.read_z_gyro_out()
+        gyro_data = self.read_x_gyro_out()+':'+self.read_y_gyro_out()+':'+self.read_z_gyro_out()
 
         return gyro_data + "::" + accl_data + "::" + delta_ang_data + "::" + delta_vel_data 

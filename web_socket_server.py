@@ -22,6 +22,18 @@ class WebSocketServer:
             async for req in websocket:      
                 self.previous_command = req 
 
+                if req == 'start':
+                    imu = ADIS16470()
+                    gps = GPS()
+                    radar = AWR6843AOPEVM()
+                    camera = BaslerCamera()
+
+                    print(f'{datetime.now()}: Sending sensor data...')
+                    while True:
+                        await websocket.send(imu.read_data() + "#####" + gps.read_data().decode() + "#####" + radar.read_data())            
+                        # await websocket.send(imu.read_data() + "#####" + gps.read_data()  + "#####" + radar.read_data() + "#####" + camera.grab_images())            
+                        time.sleep(0.5)
+
                 if req == 'imu_on':
                     imu = ADIS16470()
                     print(f'{datetime.now()}: Sending IMU data...')
@@ -49,6 +61,8 @@ class WebSocketServer:
                         await websocket.send(camera.grab_images())
 
         except websockets.exceptions.ConnectionClosed:
+            if self.previous_command == 'stop':
+                print(f"{datetime.now()}: Stopped sending sensor data")
             if self.previous_command == 'imu_on':
                 print(f"{datetime.now()}: Stopped sending IMU data")
             if self.previous_command == 'gps_on':

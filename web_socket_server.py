@@ -46,6 +46,8 @@ class WebSocketServer:
                     print(f'{datetime.now()}: Sending GPS data...')
                     while True:
                         await websocket.send(gps.read_data())
+                        time.sleep(0.1)
+
 
                 if req == 'radar_on':
                     radar = AWR6843AOPEVM()

@@ -3,6 +3,8 @@ from PIL import Image
 from io import BytesIO
 from flask import Flask, Response
 
+from utils import helpers
+
 
 app = Flask(__name__)
 
@@ -51,4 +53,4 @@ def stream():
 
 if __name__ == "__main__":
     initialize_camera()
-    app.run(host="192.168.3.3", port=8002)
+    app.run(host=helpers.get_host_ip(), port=8002)

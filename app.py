@@ -4,7 +4,7 @@ from datetime import datetime
 
 def main():
     try:
-        ws = WebSocketServer(helpers.get_host_ip(), 8765)
+        ws = WebSocketServer(helpers.get_host_ip(), 8000)
         ws.start()
     except KeyboardInterrupt:
         print(f'\n{datetime.now()}: Closing Server...')

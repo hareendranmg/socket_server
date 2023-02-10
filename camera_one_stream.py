@@ -53,4 +53,4 @@ def stream():
 
 if __name__ == "__main__":
     initialize_camera()
-    app.run(host=helpers.get_host_ip(), port=8001)
+    app.run(host=helpers.get_host_ip(), port=helpers.camera_one_port)

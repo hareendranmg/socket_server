@@ -1,5 +1,10 @@
 import socket
 
+camera_one_port = 1001
+camera_two_port = 1002
+radar_port = 1003
+imu_port = 1004
+gps_port = 1005
 
 def get_host_ip():
     try:

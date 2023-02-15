@@ -9,4 +9,4 @@ class GPS:
         self.gps_ser.close()
 
     def read_data(self):
-        return self.gps_ser.readline()
+        return self.gps_ser.readline().decode()
